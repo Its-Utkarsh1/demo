@@ -18,9 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
 
-    private InstitutionRepository institutionRepository;
-    private ModelMapper modelMapper;
-    private DepartmentRepository departmentRepository;
+    private final InstitutionRepository institutionRepository;
+    private final ModelMapper modelMapper;
+    private final DepartmentRepository departmentRepository;
 
 
     @Override
@@ -29,7 +29,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Institution institution = institutionRepository.findByCode(request.getInstitutionCode())
                 .orElseThrow(() -> new RuntimeException("Institution not found."));
 
-        if (departmentRepository.existsByNameAndInstitution(request.getName(), institution)) {
+        if (departmentRepository.existsByName(request.getName())){
             throw new RuntimeException("Department already exists in this institution.");
         }
         Department department = Department.builder()
@@ -37,22 +37,13 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .institution(institution)
                 .build();
         Department savedDepartment = departmentRepository.save(department);
-
-        DepartmentResponse response = modelMapper.map(savedDepartment, DepartmentResponse.class);
-        response.setInstitutionCode(savedDepartment.getInstitution().getCode());
-        response.setInstitutionName(savedDepartment.getInstitution().getName());
-
-        return response;
+        return modelMapper.map(savedDepartment, DepartmentResponse.class);
     }
 
     @Override
     public DepartmentResponse getDepartmentById(Long id) {
         Department department = departmentRepository.findById(id).orElseThrow(()-> new RuntimeException("Department not found."));
-        DepartmentResponse response = modelMapper.map(department, DepartmentResponse.class);
-        response.setInstitutionCode(department.getInstitution().getCode());
-        response.setInstitutionName(department.getInstitution().getName());
-
-        return response;
+        return modelMapper.map(department, DepartmentResponse.class);
     }
 
     @Override
@@ -61,8 +52,6 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .stream()
                 .map(department -> {
                     DepartmentResponse response = modelMapper.map(department, DepartmentResponse.class);
-                    response.setInstitutionCode(department.getInstitution().getCode());
-                    response.setInstitutionName(department.getInstitution().getName());
                     return response;
                 })
                 .toList();
@@ -75,8 +64,6 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .stream()
                 .map(department ->{
                     DepartmentResponse response = modelMapper.map(department, DepartmentResponse.class);
-                    response.setInstitutionCode(institution.getCode());
-                    response.setInstitutionName(institution.getName());
                     return response;
                 })
                 .toList();
@@ -90,23 +77,16 @@ public class DepartmentServiceImpl implements DepartmentService {
         Institution institution = institutionRepository.findByCode(request.getInstitutionCode())
                 .orElseThrow(() -> new RuntimeException("Institution not found."));
 
-        if (departmentRepository.existsByNameAndInstitution(request.getName(), institution)
+        if (departmentRepository.existsByName(request.getName())
                 && (!department.getName().equals(request.getName())
                 || !department.getInstitution().getId().equals(institution.getId()))) {
 
             throw new RuntimeException("Department already exists in this institution.");
         }
-
         department.setName(request.getName());
         department.setInstitution(institution);
-
         Department updatedDepartment = departmentRepository.save(department);
-
-        DepartmentResponse response = modelMapper.map(updatedDepartment, DepartmentResponse.class);
-        response.setInstitutionCode(updatedDepartment.getInstitution().getCode());
-        response.setInstitutionName(updatedDepartment.getInstitution().getName());
-
-        return response;
+        return modelMapper.map(updatedDepartment, DepartmentResponse.class);
     }
 
     @Override

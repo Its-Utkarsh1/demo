@@ -4,7 +4,9 @@ import com.LabResourceUtilizationPlatform.Dtos.Request.CreateInstitutionRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateInstitutionRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.InstitutionResponse;
 import com.LabResourceUtilizationPlatform.Service.InstitutionService;
+import com.LabResourceUtilizationPlatform.Service.ServiceImpl.InstitutionServiceImpl;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/institutions")
 public class InstitutionController {
 
-    private InstitutionService institutionService;
+    private final InstitutionServiceImpl institutionService;
 
-    public InstitutionController(InstitutionService institutionService) {
-        this.institutionService = institutionService;
-    }
 
     @PostMapping
     public ResponseEntity<InstitutionResponse> createInstitution(@Valid @RequestBody CreateInstitutionRequest request){
@@ -29,7 +29,6 @@ public class InstitutionController {
     @GetMapping("/{id}")
     public ResponseEntity<InstitutionResponse> getInstitutionById(
             @PathVariable Long id) {
-
         return ResponseEntity.ok(institutionService.getInstitutionById(id));
     }
 

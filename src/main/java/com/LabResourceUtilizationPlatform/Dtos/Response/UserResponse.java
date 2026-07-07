@@ -1,14 +1,14 @@
 package com.LabResourceUtilizationPlatform.Dtos.Response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
     private String fullName;
     private String email;
@@ -18,6 +18,4 @@ public class UserResponse {
     private String role;
     private String institution;
     private String department;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

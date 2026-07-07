@@ -3,6 +3,8 @@ package com.LabResourceUtilizationPlatform.Entity;
 import jakarta.persistence.*;
         import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "institutions")
 @Getter
@@ -32,4 +34,7 @@ public class Institution {
     private String address;
 
     private String website;
+
+    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Department> departments;
 }

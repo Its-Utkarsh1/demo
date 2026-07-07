@@ -1,11 +1,16 @@
 package com.LabResourceUtilizationPlatform.Dtos.Request;
 
+import com.LabResourceUtilizationPlatform.Entity.RoleName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateUserRequest{
 
     @NotBlank(message = "Full name is required")
@@ -25,11 +30,14 @@ public class CreateUserRequest{
     private String registrationId;
 
     @NotNull(message = "Role is required")
-    private Long roleId;
+    private RoleName role;
+
+    @NotNull(message = "Institution name is required")
+    private String institutionName;
 
     @NotNull(message = "Institution ID is required")
     private Long institutionId;
 
-    @NotNull(message = "Department ID is required")
-    private Long departmentId;
+    @NotNull(message = "Department name is required")
+    private String departmentName;
 }

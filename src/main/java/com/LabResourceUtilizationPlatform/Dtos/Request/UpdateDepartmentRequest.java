@@ -2,11 +2,13 @@ package com.LabResourceUtilizationPlatform.Dtos.Request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateDepartmentRequest {
     @NotBlank(message = "Department name is required")
     private String name;

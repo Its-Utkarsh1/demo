@@ -1,14 +1,14 @@
 package com.LabResourceUtilizationPlatform.Dtos.Response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookingResponse {
     private Long bookingId;
     private String equipmentName;

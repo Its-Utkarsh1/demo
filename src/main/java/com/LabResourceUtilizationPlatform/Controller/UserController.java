@@ -3,8 +3,10 @@ package com.LabResourceUtilizationPlatform.Controller;
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.UserResponse;
+import com.LabResourceUtilizationPlatform.Service.ServiceImpl.UserServiceImpl;
 import com.LabResourceUtilizationPlatform.Service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
-    public UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    public final UserServiceImpl userService;
 
     @PostMapping
     public ResponseEntity<UserResponse>createUser(@Valid @RequestBody CreateUserRequest request){

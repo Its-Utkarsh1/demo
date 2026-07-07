@@ -31,6 +31,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean emailVerified = false;
 
     @NotBlank

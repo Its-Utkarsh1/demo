@@ -22,11 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private InstitutionRepository institutionRepository;
-    private DepartmentRepository departmentRepository;
-    private ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final InstitutionRepository institutionRepository;
+    private final DepartmentRepository departmentRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -41,9 +41,13 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByRegistrationId(request.getRegistrationId())){
             throw new RuntimeException("Registration ID already exists.");
         }
+        if(!institutionRepository.existsByName(request.getInstitutionName())){
+            throw new RuntimeException("Institution not found.");
+        }
+
 
         //Finding either role exists or not
-        Role role = roleRepository.findById(request.getRoleId())
+        Role role = roleRepository.findByRoleName(request.getRole())
                 .orElseThrow(() -> new RuntimeException("Role not found."));
 
         //Finding either Institution exists or not
@@ -51,7 +55,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()->new RuntimeException("Institution not found."));
 
         //Finding either Department exists or not
-        Department department = departmentRepository.findById(request.getDepartmentId())
+        Department department = departmentRepository.findByName(request.getDepartmentName())
                 .orElseThrow(()->new RuntimeException("Department not found."));
 
         User user = User.builder()
@@ -61,6 +65,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(request.getPhoneNumber())
                 .registrationId(request.getRegistrationId())
                 .role(role)
+                .emailVerified(false)
                 .institution(institution)
                 .department(department)
                 .build();
@@ -99,13 +104,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Role role = roleRepository.findById(request.getRoleId())
+        Role role = roleRepository.findByRoleName(request.getRole())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         Institution institution = institutionRepository.findById(request.getInstitutionId())
                 .orElseThrow(() -> new RuntimeException("Institution not found"));
 
-        Department department = departmentRepository.findById(request.getDepartmentId())
+        Department department = departmentRepository.findByName(request.getDepartmentName())
                 .orElseThrow(() -> new RuntimeException("Department not found"));
 
         modelMapper.map(request,User.class);

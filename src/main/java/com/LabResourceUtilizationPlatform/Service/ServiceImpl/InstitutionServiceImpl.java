@@ -2,7 +2,9 @@ package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateInstitutionRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateInstitutionRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Response.DepartmentResponse;
 import com.LabResourceUtilizationPlatform.Dtos.Response.InstitutionResponse;
+import com.LabResourceUtilizationPlatform.Entity.Department;
 import com.LabResourceUtilizationPlatform.Entity.Institution;
 import com.LabResourceUtilizationPlatform.Repository.InstitutionRepository;
 import com.LabResourceUtilizationPlatform.Service.InstitutionService;
@@ -16,8 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InstitutionServiceImpl implements InstitutionService {
 
-    private InstitutionRepository institutionRepository;
-    private ModelMapper modelMapper;
+    private final InstitutionRepository institutionRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public InstitutionResponse createInstitution(CreateInstitutionRequest request) {
@@ -37,15 +39,32 @@ public class InstitutionServiceImpl implements InstitutionService {
     @Override
     public InstitutionResponse getInstitutionById(Long id) {
         Institution institution = institutionRepository.findById(id).orElseThrow(() -> new RuntimeException("Institution not found."));
-        return modelMapper.map(institution,InstitutionResponse.class);
+        InstitutionResponse response = modelMapper.map(institution,InstitutionResponse.class);
+        List<DepartmentResponse> departmentResponseList = institution.getDepartments()
+                .stream()
+                .map(department -> DepartmentResponse.builder()
+                        .name(department.getName())
+                        .build()).toList();
+
+        response.setDepartments(departmentResponseList);
+        return response;
     }
 
     @Override
     public List<InstitutionResponse> getAllInstitutions() {
         return institutionRepository.findAll()
                 .stream()
-                .map(institution -> modelMapper.map(institution,InstitutionResponse.class))
-                .toList();
+                .map(institution ->{
+                    InstitutionResponse response = modelMapper.map(institution, InstitutionResponse.class);
+                    List<DepartmentResponse> departmentList = institution.getDepartments()
+                            .stream()
+                            .map(department ->DepartmentResponse.builder()
+                                    .name(department.getName())
+                                    .build())
+                            .toList();
+                    response.setDepartments(departmentList);
+                    return response;
+                } ).toList();
     }
 
     @Override
