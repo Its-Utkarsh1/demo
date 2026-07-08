@@ -8,12 +8,19 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
 
-  refresh-secret: ${JWT_REFRESH_SECRET}
-  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            debug: true
 
   jpa:
     hibernate:
@@ -22,3 +29,10 @@ jwt:
     properties:
       hibernate:
         format_sql: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+  refresh-secret: ${JWT_REFRESH_SECRET}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}

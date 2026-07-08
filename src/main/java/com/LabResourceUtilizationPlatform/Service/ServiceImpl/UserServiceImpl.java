@@ -13,21 +13,27 @@ import com.LabResourceUtilizationPlatform.Repository.RoleRepository;
 import com.LabResourceUtilizationPlatform.Repository.UserRepository;
 import com.LabResourceUtilizationPlatform.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final OtpServiceImpl otpService;
+    private final EmailServiceImpl emailService;
     private final RoleRepository roleRepository;
     private final InstitutionRepository institutionRepository;
     private final DepartmentRepository departmentRepository;
     private final ModelMapper modelMapper;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse createUser(CreateUserRequest request) {
@@ -61,7 +67,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .registrationId(request.getRegistrationId())
                 .role(role)
@@ -70,8 +76,23 @@ public class UserServiceImpl implements UserService {
                 .department(department)
                 .build();
 
+
+        // Generate OTP and send email
+        String otp = otpService.generateOtp();
+        user.setOtp(otp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
+
         User savedUser = userRepository.save(user);
-        return modelMapper.map(savedUser,UserResponse.class);
+
+        emailService.sendOtpByEmail(request.getEmail(),otp);
+
+        log.info("User Registered: {}",request.getEmail());
+
+        UserResponse response = modelMapper.map(savedUser,UserResponse.class);
+        response.setInstitution(savedUser.getInstitution().getName());
+        response.setRole(savedUser.getRole().getRoleName().name());
+        response.setDepartment(savedUser.getDepartment().getName());
+        return response;
     }
 
     @Override

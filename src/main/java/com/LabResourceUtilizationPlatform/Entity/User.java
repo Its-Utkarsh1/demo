@@ -59,6 +59,10 @@ public class User {
     @JoinColumn(name="department_id", nullable = false)
     private Department department;
 
+    private String otp;
+
+    private LocalDateTime otpExpiry;
+
     @CreationTimestamp
     @Column(nullable = false,updatable = false)
     private LocalDateTime createdAt;

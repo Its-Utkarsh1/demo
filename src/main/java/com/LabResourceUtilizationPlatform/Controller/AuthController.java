@@ -18,23 +18,20 @@ public class AuthController {
     private final AuthServiceImpl authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
-            @Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<String> verifyEmail(
-            @Valid @RequestBody VerifyEmailRequest request) {
+    public ResponseEntity<String> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
 
         authService.verifyEmail(request);
         return ResponseEntity.ok("Email verified successfully.");
     }
 
     @PostMapping("/resend-otp")
-    public ResponseEntity<String> resendOtp(
-            @Valid @RequestBody ResendOtpRequest request) {
+    public ResponseEntity<String> resendOtp(@Valid @RequestBody ResendOtpRequest request) {
 
         authService.resendOtp(request);
         return ResponseEntity.ok("OTP sent successfully.");
