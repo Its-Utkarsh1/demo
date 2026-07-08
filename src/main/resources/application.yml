@@ -3,10 +3,17 @@ spring:
     name: Lap-Resource-Utilization-Platform
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/lab_resource_db
-    username: postgres
-    password: admin
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
+
+  refresh-secret: ${JWT_REFRESH_SECRET}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION}
 
   jpa:
     hibernate:
