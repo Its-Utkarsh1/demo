@@ -11,14 +11,6 @@ import java.util.Optional;
 public interface InstitutionRepository extends JpaRepository<Institution,Long> {
     Optional<Institution> findByCode(String code);
 
-    Optional<Institution> findByName(String name);
-
-    Optional<Institution> findByNameAndCode(String name,String code);
-
-    Optional<Institution> findByEmail(String email);
-
-    Optional<Institution> findByPhoneNumber(String phoneNumber);
-
     boolean existsByCode(String code);
 
     boolean existsByEmail(String email);

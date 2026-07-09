@@ -2,6 +2,7 @@ package com.LabResourceUtilizationPlatform.Entity;
 
 import com.LabResourceUtilizationPlatform.Entity.Enum.LabStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,8 +13,25 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Builder
-@Table(name = "labs")
-@AllArgsConstructor
+@Table(
+        name = "labs",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {
+                                "lab_code",
+                                "institution_id",
+                                "department_id"
+                        }
+                ),
+                @UniqueConstraint(
+                        columnNames = {
+                                "lab_name",
+                                "institution_id",
+                                "department_id"
+                        }
+                )
+        }
+)@AllArgsConstructor
 @NoArgsConstructor
 public class Lab {
 
@@ -24,11 +42,13 @@ public class Lab {
     @Column(nullable = false)
     private String labName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String labCode;
 
+    @Column(nullable = false)
     private String location;
 
+    @Min(value = 1, message = "User capacity must be at least 1")
     private Integer usercapacity;
 
     @Enumerated(EnumType.STRING)

@@ -10,15 +10,16 @@ import com.LabResourceUtilizationPlatform.Security.JwtUtils;
 import com.LabResourceUtilizationPlatform.Service.AuthService;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
@@ -32,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+    private final RedisTemplate<String, String> redisTemplate;
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     @Override
@@ -71,28 +73,35 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void verifyEmail(VerifyEmailRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found."));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found."));
 
-        //Verify is user is already verified
-        if(user.getEmailVerified()){
-            throw  new RuntimeException("Email is already verified.");
+        // Check if already verified
+        if (user.getEmailVerified()) {
+            throw new RuntimeException("Email is already verified.");
         }
 
-        if(user.getOtpExpiry().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Otp has expired.");
+        // Get OTP from Redis
+        String storedOtp = redisTemplate.opsForValue()
+                .get("otp:" + request.getEmail());
+
+        // OTP expired or not found
+        if (storedOtp == null) {
+            throw new RuntimeException("OTP has expired.");
         }
 
-        //Verifying Otp
-        if(!otpService.verifyOtp(request.getOtp(), user.getOtp())){
-            throw new RuntimeException("Invalid Otp.");
+        // Verify OTP
+        if (!storedOtp.equals(request.getOtp())) {
+            throw new RuntimeException("Invalid OTP.");
         }
 
-
+        // Mark email as verified
         user.setEmailVerified(true);
-        user.setOtp(null);
-        user.setOtpExpiry(null);
-
         userRepository.save(user);
+
+        // Remove OTP from Redis
+        redisTemplate.delete("otp:" + request.getEmail());
+
         logger.info("Email verified successfully: {}", user.getEmail());
     }
 
@@ -107,11 +116,12 @@ public class AuthServiceImpl implements AuthService {
 
         String otp = otpService.generateOtp();
 
-        user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
-
-        userRepository.save(user);
-
+        // Store new OTP in Redis for 10 minutes
+        redisTemplate.opsForValue().set(
+                "otp:" + user.getEmail(),
+                otp,
+                Duration.ofMinutes(10)
+        );
         emailService.sendOtpByEmail(user.getEmail(), otp);
 
         logger.info("OTP resent successfully to {}", user.getEmail());

@@ -2,8 +2,7 @@ package com.LabResourceUtilizationPlatform.Entity.Enum;
 
 public enum EquipmentStatus {
     AVAILABLE,
-    BOOKED,
+    IN_USE,
     UNDER_MAINTENANCE,
     OUT_OF_SERVICE,
-    RETIRED
 }

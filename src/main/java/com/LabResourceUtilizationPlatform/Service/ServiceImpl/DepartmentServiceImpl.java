@@ -10,6 +10,10 @@ import com.LabResourceUtilizationPlatform.Repository.InstitutionRepository;
 import com.LabResourceUtilizationPlatform.Service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +26,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final ModelMapper modelMapper;
     private final DepartmentRepository departmentRepository;
 
+    private static final Logger logger =
+            LoggerFactory.getLogger(DepartmentServiceImpl.class);
 
     @Override
     public DepartmentResponse createDepartment(CreateDepartmentRequest request) {
@@ -37,27 +43,27 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .institution(institution)
                 .build();
         Department savedDepartment = departmentRepository.save(department);
-        return modelMapper.map(savedDepartment, DepartmentResponse.class);
-    }
+        logger.info("Department created: {}", savedDepartment.getName());
+        return mapToResponse(savedDepartment);    }
 
     @Override
+    @Cacheable(value = "departments", key = "#request.institutionCode + ':' + #request.name")
     public DepartmentResponse getDepartmentByName(DepartmentRequest request) {
-        Department department = departmentRepository.findByNameAndInstitution_Code(request.getName(), request.getInstitutionCode()).orElseThrow(() -> new RuntimeException("Department not found."));
-        return modelMapper.map(department, DepartmentResponse.class);
+        Department department = departmentRepository.findByNameAndInstitution_Code(request.getName(),
+                request.getInstitutionCode()).orElseThrow(() -> new RuntimeException("Department not found."));
+        return mapToResponse(department);
     }
 
     @Override
     public List<DepartmentResponse> getAllDepartments(String institutionCode) {
         return departmentRepository.findByInstitution_Code(institutionCode)
                 .stream()
-                .map(department -> {
-                    DepartmentResponse response = modelMapper.map(department, DepartmentResponse.class);
-                    return response;
-                })
+                .map(this::mapToResponse)
                 .toList();
     }
 
     @Override
+    @CacheEvict(value = "departments", key = "#request.institutionCode + ':' + #request.name")
     public DepartmentResponse updateDepartment(DepartmentRequest request,String newName) {
         Department department = departmentRepository.findByNameAndInstitution_Code(request.getName(),request.getInstitutionCode())
                 .orElseThrow(() -> new RuntimeException("Department not found."));
@@ -70,10 +76,12 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
         department.setName(newName);
         Department updatedDepartment = departmentRepository.save(department);
-        return modelMapper.map(updatedDepartment, DepartmentResponse.class);
+        logger.info("Department updated: {}", updatedDepartment.getName());
+        return mapToResponse(updatedDepartment);
     }
 
     @Override
+    @CacheEvict(value = "departments", key = "#request.institutionCode + ':' + #request.name")
     public void deleteDepartment(DepartmentRequest request) {
 
         Department department = departmentRepository
@@ -83,5 +91,10 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .orElseThrow(() -> new RuntimeException("Department not found."));
 
         departmentRepository.delete(department);
+        logger.info("Department deleted: {}", department.getName());
+    }
+
+    private DepartmentResponse mapToResponse(Department department) {
+        return modelMapper.map(department, DepartmentResponse.class);
     }
 }

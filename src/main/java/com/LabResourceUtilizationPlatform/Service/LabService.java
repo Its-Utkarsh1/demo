@@ -1,19 +1,19 @@
 package com.LabResourceUtilizationPlatform.Service;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateLabRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateLabRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.LabResponse;
 
 import java.util.List;
-
 public interface LabService {
 
     LabResponse createLab(CreateLabRequest request);
 
-    LabResponse getLabById(Long id);
+    LabResponse getLabByCode(String labCode, String institutionCode);
 
-    List<LabResponse> getAllLabs();
+    List<LabResponse> getAllLabs(String institutionCode);
 
-    LabResponse updateLab(Long id, CreateLabRequest request);
+    LabResponse updateLab(UpdateLabRequest request);
 
-    void deleteLab(Long id);
+    void deleteLab(String labCode, String institutionCode);
 }

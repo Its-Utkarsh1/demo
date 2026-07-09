@@ -24,6 +24,7 @@ public class InstitutionController {
         InstitutionResponse response = institutionService.createInstitution(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
     @GetMapping("/{instituteCode}")
     public ResponseEntity<InstitutionResponse> getInstitutionByCode(
             @PathVariable String instituteCode) {

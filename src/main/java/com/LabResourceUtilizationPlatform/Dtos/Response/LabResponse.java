@@ -12,7 +12,7 @@ public class LabResponse {
     private String labName;
     private String labCode;
     private String location;
-    private Integer capacity;
+    private Integer userCapacity;
     private String status;
     private String institution;
     private String department;

@@ -2,21 +2,30 @@ package com.LabResourceUtilizationPlatform.Entity;
 
 import com.LabResourceUtilizationPlatform.Entity.Enum.EquipmentStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "equipment")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Equipment {
+@Table(
+        name = "equipment",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"equipment_code", "lab_id"})
+        },
+        indexes = {
+                @Index(name = "idx_equipment_lab", columnList = "lab_id"),
+                @Index(name = "idx_equipment_code", columnList = "equipment_code")
+        }
+)
+public class Equipment{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,40 +34,20 @@ public class Equipment {
     @Column(nullable = false)
     private String equipmentName;
 
-    @Column(nullable = false, unique = true)
-    private String serialNumber;
+    @Column(name = "equipment_code", nullable = false)
+    private String equipmentCode;
 
     @Column(nullable = false)
-    private String manufacturer;
-
-    @Column(nullable = false)
-    private String model;
-
-    @Column(nullable = false)
-    private BigDecimal cost;
-
-    //Number of same Equipment that have
-    private int quantity;
-
-    @Column(nullable = false)
-    private LocalDate purchaseDate;
-
-    private LocalDate warrantyExpiryDate;
+    @Min(value = 1, message = "Quantity must be at least 1")
+    private Integer quantity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EquipmentStatus status;
 
-    @Column(length = 1000)
-    private String description;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "institution_id", nullable = false)
-    private Institution institution;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id", nullable = false)
-    private Department department;
+    @JoinColumn(name = "lab_id", nullable = false)
+    private Lab lab;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -67,4 +56,5 @@ public class Equipment {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
 }

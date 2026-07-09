@@ -10,7 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,6 +44,7 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
+    @Cacheable(value = "institutions", key = "#institutionCode")
     public InstitutionResponse getInstitutionByCode(String institutionCode) {
         Institution institution = institutionRepository.findByCode(institutionCode).orElseThrow(() -> new RuntimeException("Institution not found."));
         InstitutionResponse response = modelMapper.map(institution,InstitutionResponse.class);
@@ -71,7 +76,10 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "institutions", key = "#request.code")
     public InstitutionResponse updateInstitution(UpdateInstitutionRequest request) {
+
         Institution institution = institutionRepository.findByCode(request.getCode())
                 .orElseThrow(() -> new RuntimeException("Institution not found."));
 
@@ -92,6 +100,7 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
+    @CacheEvict(value = "institutions", key = "#institutionCode")
     public void deleteInstitution(String institutionCode) {
         Institution institution = institutionRepository.findByCode(institutionCode).orElseThrow(() -> new RuntimeException("Institution not found."));
         institutionRepository.delete(institution);

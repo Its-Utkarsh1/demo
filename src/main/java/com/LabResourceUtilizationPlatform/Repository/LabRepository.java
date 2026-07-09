@@ -6,6 +6,7 @@ import com.LabResourceUtilizationPlatform.Entity.Lab;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,8 +23,8 @@ public interface LabRepository extends JpaRepository<Lab, Long> {
             Institution institution,
             Department department
     );
-    Optional<Lab> findByLabCodeAndInstitutionAndDepartment(
-            String labCode,
-            Institution institution,
-            Department department
-    );}
+
+    List<Lab> findByInstitution_Code(String institutionCode);
+
+    Optional<Lab> findByLabCodeAndInstitution_Code(String labCode, String institutionCode);
+}

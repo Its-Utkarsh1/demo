@@ -4,6 +4,7 @@ import com.LabResourceUtilizationPlatform.Dtos.Request.CreateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.UserResponse;
 import com.LabResourceUtilizationPlatform.Entity.Department;
+import com.LabResourceUtilizationPlatform.Entity.Enum.RoleName;
 import com.LabResourceUtilizationPlatform.Entity.Institution;
 import com.LabResourceUtilizationPlatform.Entity.Role;
 import com.LabResourceUtilizationPlatform.Entity.User;
@@ -16,12 +17,14 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
     private final DepartmentRepository departmentRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate<String, String> redisTemplate;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
@@ -81,15 +85,20 @@ public class UserServiceImpl implements UserService {
                 .build();
 
 
-        // Generate OTP and send email
-        String otp = otpService.generateOtp();
-        user.setOtp(otp);
-        user.setOtpExpiry(LocalDateTime.now().plusMinutes(10));
-
         User savedUser = userRepository.save(user);
 
-        emailService.sendOtpByEmail(request.getEmail(),otp);
-
+        String otp = otpService.generateOtp();
+        redisTemplate.opsForValue().set(
+                "otp:" + savedUser.getEmail(),
+                otp,
+                Duration.ofMinutes(10)
+        );
+        try {
+            emailService.sendOtpByEmail(savedUser.getEmail(), otp);
+        } catch (Exception ex) {
+            redisTemplate.delete("otp:" + savedUser.getEmail());
+            throw ex;
+        }
         logger.info("User Registered: {}",request.getEmail());
 
         UserResponse response = modelMapper.map(savedUser,UserResponse.class);
@@ -100,6 +109,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#email")
     public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found."));
 
@@ -126,12 +136,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", key = "#request.email")
     public UserResponse updateUser(UpdateUserRequest request) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
         // Update email if provided
@@ -195,6 +203,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#email")
     public void deleteUser(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

@@ -1,5 +1,6 @@
 package com.LabResourceUtilizationPlatform.Dtos.Request;
 
+
 import com.LabResourceUtilizationPlatform.Entity.Enum.LabStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -9,32 +10,33 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreateLabRequest {
+@AllArgsConstructor
+public class UpdateLabRequest {
 
-    @NotBlank(message = "Lab name is required.")
-    private String labName;
-
-    @NotBlank(message = "Lab code is required.")
+    // Current lab identifier
+    @NotBlank(message = "Lab code is required")
     private String labCode;
 
-    @NotBlank(message = "location is required.")
+    @NotBlank(message = "Institution code is required")
+    private String institutionCode;
+
+    // Optional: if changing the lab code
+    private String newLabCode;
+
+    @NotBlank(message = "Lab name is required")
+    private String labName;
+
+    @NotBlank(message = "Department name is required")
+    private String departmentName;
+
+    @NotBlank(message = "Location is required")
     private String location;
 
     @NotNull(message = "User capacity is required")
     @Min(value = 1, message = "User capacity must be at least 1")
     private Integer userCapacity;
 
-    @NotNull(message = "Lab status is required.")
+    @NotNull(message = "Status is required")
     private LabStatus status;
-
-    @NotBlank(message = "Institution name is required.")
-    private String institutionName;
-
-    @NotBlank(message = "Institution code is required.")
-    private String institutionCode;
-
-    @NotBlank(message = "Department name required.")
-    private String departmentName;
 }
