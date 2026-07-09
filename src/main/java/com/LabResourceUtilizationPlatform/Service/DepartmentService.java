@@ -1,7 +1,7 @@
 package com.LabResourceUtilizationPlatform.Service;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateDepartmentRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateDepartmentRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.DepartmentRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.DepartmentResponse;
 
 import java.util.List;
@@ -9,13 +9,11 @@ import java.util.List;
 public interface DepartmentService {
     DepartmentResponse createDepartment(CreateDepartmentRequest request);
 
-    DepartmentResponse getDepartmentById(Long id);
+    DepartmentResponse getDepartmentByName(DepartmentRequest request);
 
-    List<DepartmentResponse> getAllDepartments();
+    List<DepartmentResponse> getAllDepartments(String institutionCode);
 
-    List<DepartmentResponse> getDepartmentsByInstitution(String institutionCode);
+    DepartmentResponse updateDepartment(DepartmentRequest request,String newName) ;
 
-    DepartmentResponse updateDepartment(Long id, UpdateDepartmentRequest request);
-
-    void deleteDepartment(Long id);
+    void deleteDepartment(DepartmentRequest request);
 }

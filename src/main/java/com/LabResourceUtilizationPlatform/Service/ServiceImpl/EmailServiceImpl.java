@@ -4,17 +4,19 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class EmailServiceImpl {
 
     private final JavaMailSender mailSender;
+    private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
     @Async
     public void sendOtpByEmail(String toEmail, String otp){
@@ -90,9 +92,10 @@ public class EmailServiceImpl {
                     helper.setSubject(subject);
                     helper.setText(body,true);
                     mailSender.send(message);
-                    log.info("Email sent to: {}", toEmail);
+                    logger.info("Email sent to: {}", toEmail);
                 }catch (MessagingException e) {
-                    log.error("Failed to send email to {}: {}", toEmail, e.getMessage());
+                    logger.error("Failed to send email to {}: {}", toEmail, e.getMessage());
+                    throw new RuntimeException("Failed to send email", e);
                 }
             }
 

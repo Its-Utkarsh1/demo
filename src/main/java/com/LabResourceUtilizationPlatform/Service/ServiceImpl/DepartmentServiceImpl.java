@@ -1,7 +1,7 @@
 package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateDepartmentRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateDepartmentRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.DepartmentRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.DepartmentResponse;
 import com.LabResourceUtilizationPlatform.Entity.Department;
 import com.LabResourceUtilizationPlatform.Entity.Institution;
@@ -29,7 +29,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Institution institution = institutionRepository.findByCode(request.getInstitutionCode())
                 .orElseThrow(() -> new RuntimeException("Institution not found."));
 
-        if (departmentRepository.existsByName(request.getName())){
+        if (departmentRepository.existsByNameAndInstitution_Code(request.getName(), request.getInstitutionCode())) {
             throw new RuntimeException("Department already exists in this institution.");
         }
         Department department = Department.builder()
@@ -41,14 +41,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentResponse getDepartmentById(Long id) {
-        Department department = departmentRepository.findById(id).orElseThrow(()-> new RuntimeException("Department not found."));
+    public DepartmentResponse getDepartmentByName(DepartmentRequest request) {
+        Department department = departmentRepository.findByNameAndInstitution_Code(request.getName(), request.getInstitutionCode()).orElseThrow(() -> new RuntimeException("Department not found."));
         return modelMapper.map(department, DepartmentResponse.class);
     }
 
     @Override
-    public List<DepartmentResponse> getAllDepartments() {
-        return departmentRepository.findAll()
+    public List<DepartmentResponse> getAllDepartments(String institutionCode) {
+        return departmentRepository.findByInstitution_Code(institutionCode)
                 .stream()
                 .map(department -> {
                     DepartmentResponse response = modelMapper.map(department, DepartmentResponse.class);
@@ -58,42 +58,30 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<DepartmentResponse> getDepartmentsByInstitution(String institutionCode) {
-        Institution institution = institutionRepository.findByCode(institutionCode).orElseThrow(()->new RuntimeException("Institution not found"));
-        return departmentRepository.findByInstitution(institution)
-                .stream()
-                .map(department ->{
-                    DepartmentResponse response = modelMapper.map(department, DepartmentResponse.class);
-                    return response;
-                })
-                .toList();
-    }
-
-    @Override
-    public DepartmentResponse updateDepartment(Long id, UpdateDepartmentRequest request) {
-        Department department = departmentRepository.findById(id)
+    public DepartmentResponse updateDepartment(DepartmentRequest request,String newName) {
+        Department department = departmentRepository.findByNameAndInstitution_Code(request.getName(),request.getInstitutionCode())
                 .orElseThrow(() -> new RuntimeException("Department not found."));
 
-        Institution institution = institutionRepository.findByCode(request.getInstitutionCode())
-                .orElseThrow(() -> new RuntimeException("Institution not found."));
 
-        if (departmentRepository.existsByName(request.getName())
-                && (!department.getName().equals(request.getName())
-                || !department.getInstitution().getId().equals(institution.getId()))) {
+        if (!department.getName().equals(newName)
+                && departmentRepository.existsByNameAndInstitution_Code(newName, request.getInstitutionCode())) {
 
             throw new RuntimeException("Department already exists in this institution.");
         }
-        department.setName(request.getName());
-        department.setInstitution(institution);
+        department.setName(newName);
         Department updatedDepartment = departmentRepository.save(department);
         return modelMapper.map(updatedDepartment, DepartmentResponse.class);
     }
 
     @Override
-    public void deleteDepartment(Long id) {
-        if (!departmentRepository.existsById(id)) {
-            throw new RuntimeException("Department not found.");
-        }
-        departmentRepository.deleteById(id);
+    public void deleteDepartment(DepartmentRequest request) {
+
+        Department department = departmentRepository
+                .findByNameAndInstitution_Code(
+                        request.getName(),
+                        request.getInstitutionCode())
+                .orElseThrow(() -> new RuntimeException("Department not found."));
+
+        departmentRepository.delete(department);
     }
 }

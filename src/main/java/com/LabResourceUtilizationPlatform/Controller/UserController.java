@@ -3,7 +3,6 @@ package com.LabResourceUtilizationPlatform.Controller;
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.UserResponse;
-import com.LabResourceUtilizationPlatform.Service.ServiceImpl.UserServiceImpl;
 import com.LabResourceUtilizationPlatform.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    public final UserServiceImpl userService;
+    public final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserResponse>createUser(@Valid @RequestBody CreateUserRequest request){
@@ -26,10 +25,10 @@ public class UserController {
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    @GetMapping("/{email}")
+    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
 
-        return ResponseEntity.ok(userService.getUserById(id));
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @GetMapping
@@ -38,18 +37,17 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<UserResponse> updateUser(
-            @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request) {
 
-        return ResponseEntity.ok(userService.updateUser(id, request));
+        return ResponseEntity.ok(userService.updateUser(request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteUser(@PathVariable String email) {
 
-        userService.deleteUser(id);
+        userService.deleteUser(email);
         return ResponseEntity.ok("User Deleted Successfully");
     }
 }

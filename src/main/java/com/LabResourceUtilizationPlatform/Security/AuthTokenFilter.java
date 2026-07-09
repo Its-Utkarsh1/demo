@@ -32,9 +32,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         logger.debug("AuthTokenFilter called for URL: {}", request.getRequestURI());
         try{
+
             String jwt = parseJwt(request);
 
             if(jwt != null && jwtUtils.validateAccessToken(jwt)){
+
                 String username = jwtUtils.getUsernameFromAccessToken(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);

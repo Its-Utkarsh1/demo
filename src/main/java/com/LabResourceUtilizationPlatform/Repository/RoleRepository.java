@@ -1,7 +1,7 @@
 package com.LabResourceUtilizationPlatform.Repository;
 
 import com.LabResourceUtilizationPlatform.Entity.Role;
-import com.LabResourceUtilizationPlatform.Entity.RoleName;
+import com.LabResourceUtilizationPlatform.Entity.Enum.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,5 +1,6 @@
 package com.LabResourceUtilizationPlatform.Entity;
 
+import com.LabResourceUtilizationPlatform.Entity.Enum.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface UserService {
     UserResponse createUser(CreateUserRequest request);
-    UserResponse getUserById(Long id);
+    UserResponse getUserByEmail(String email);
     List<UserResponse> getAllUsers();
-    UserResponse updateUser(Long id, UpdateUserRequest request);
-    void deleteUser(Long id);
+    UserResponse updateUser(UpdateUserRequest request);
+    void deleteUser(String email);
 }

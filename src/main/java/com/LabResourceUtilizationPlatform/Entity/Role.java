@@ -1,5 +1,6 @@
 package com.LabResourceUtilizationPlatform.Entity;
 
+import com.LabResourceUtilizationPlatform.Entity.Enum.RoleName;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

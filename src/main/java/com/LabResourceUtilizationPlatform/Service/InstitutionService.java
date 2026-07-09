@@ -9,11 +9,11 @@ import java.util.List;
 public interface InstitutionService {
     InstitutionResponse createInstitution(CreateInstitutionRequest request);
 
-    InstitutionResponse getInstitutionById(Long id);
+    InstitutionResponse getInstitutionByCode(String institutionCode);
 
     List<InstitutionResponse> getAllInstitutions();
 
-    InstitutionResponse updateInstitution(Long id, UpdateInstitutionRequest request);
+    InstitutionResponse updateInstitution(UpdateInstitutionRequest request);
 
-    void deleteInstitution(Long id);
+    void deleteInstitution(String instituteCode);
 }

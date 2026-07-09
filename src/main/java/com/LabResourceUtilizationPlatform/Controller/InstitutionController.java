@@ -4,7 +4,6 @@ import com.LabResourceUtilizationPlatform.Dtos.Request.CreateInstitutionRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateInstitutionRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.InstitutionResponse;
 import com.LabResourceUtilizationPlatform.Service.InstitutionService;
-import com.LabResourceUtilizationPlatform.Service.ServiceImpl.InstitutionServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,18 +17,17 @@ import java.util.List;
 @RequestMapping("/api/institutions")
 public class InstitutionController {
 
-    private final InstitutionServiceImpl institutionService;
-
+    private final InstitutionService institutionService;
 
     @PostMapping
     public ResponseEntity<InstitutionResponse> createInstitution(@Valid @RequestBody CreateInstitutionRequest request){
         InstitutionResponse response = institutionService.createInstitution(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<InstitutionResponse> getInstitutionById(
-            @PathVariable Long id) {
-        return ResponseEntity.ok(institutionService.getInstitutionById(id));
+    @GetMapping("/{instituteCode}")
+    public ResponseEntity<InstitutionResponse> getInstitutionByCode(
+            @PathVariable String instituteCode) {
+        return ResponseEntity.ok(institutionService.getInstitutionByCode(instituteCode));
     }
 
     @GetMapping
@@ -38,19 +36,18 @@ public class InstitutionController {
         return ResponseEntity.ok(institutionService.getAllInstitutions());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<InstitutionResponse> updateInstitution(
-            @PathVariable Long id,
             @Valid @RequestBody UpdateInstitutionRequest request) {
 
-        return ResponseEntity.ok(institutionService.updateInstitution(id, request));
+        return ResponseEntity.ok(institutionService.updateInstitution(request));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{instituteCode}")
     public ResponseEntity<Void> deleteInstitution(
-            @PathVariable Long id) {
+            @PathVariable String instituteCode) {
 
-        institutionService.deleteInstitution(id);
+        institutionService.deleteInstitution(instituteCode);
         return ResponseEntity.noContent().build();
     }
 }

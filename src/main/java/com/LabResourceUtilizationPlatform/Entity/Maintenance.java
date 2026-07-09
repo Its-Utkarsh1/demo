@@ -1,5 +1,7 @@
 package com.LabResourceUtilizationPlatform.Entity;
 
+import com.LabResourceUtilizationPlatform.Entity.Enum.MaintenanceStatus;
+import com.LabResourceUtilizationPlatform.Entity.Enum.MaintenanceType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

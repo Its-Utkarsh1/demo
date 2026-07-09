@@ -1,4 +1,4 @@
-package com.LabResourceUtilizationPlatform.Entity;
+package com.LabResourceUtilizationPlatform.Entity.Enum;
 
 public enum NotificationType {
     BOOKING,

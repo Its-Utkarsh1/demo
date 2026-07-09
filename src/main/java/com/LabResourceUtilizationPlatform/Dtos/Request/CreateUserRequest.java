@@ -1,6 +1,6 @@
 package com.LabResourceUtilizationPlatform.Dtos.Request;
 
-import com.LabResourceUtilizationPlatform.Entity.RoleName;
+import com.LabResourceUtilizationPlatform.Entity.Enum.RoleName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,8 +35,8 @@ public class CreateUserRequest{
     @NotNull(message = "Institution name is required")
     private String institutionName;
 
-    @NotNull(message = "Institution ID is required")
-    private Long institutionId;
+    @NotNull(message = "Institution code is required")
+    private String institutionCode;
 
     @NotNull(message = "Department name is required")
     private String departmentName;

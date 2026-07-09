@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateDepartmentRequest {
+public class DepartmentRequest {
     @NotBlank(message = "Department name is required")
     private String name;
 

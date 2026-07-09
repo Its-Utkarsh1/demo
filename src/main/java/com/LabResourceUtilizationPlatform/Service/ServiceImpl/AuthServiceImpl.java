@@ -1,6 +1,5 @@
 package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 
-import ch.qos.logback.classic.Logger;
 import com.LabResourceUtilizationPlatform.Dtos.Request.LoginRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.ResendOtpRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.VerifyEmailRequest;
@@ -12,6 +11,8 @@ import com.LabResourceUtilizationPlatform.Service.AuthService;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-@Slf4j
+
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
@@ -31,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     @Override
     public AuthResponse login(LoginRequest request) {
@@ -51,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtils.generateAccessToken(userDetails);
         String refreshToken = jwtUtils.generateRefreshToken(userDetails);
 
-        log.info("User logged in successfully: {}", request.getEmail());
+        logger.info("User logged in successfully: {}", request.getEmail());
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -91,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
         user.setOtpExpiry(null);
 
         userRepository.save(user);
-        log.info("Email verified successfully: {}", user.getEmail());
+        logger.info("Email verified successfully: {}", user.getEmail());
     }
 
     @Override
@@ -112,6 +114,6 @@ public class AuthServiceImpl implements AuthService {
 
         emailService.sendOtpByEmail(user.getEmail(), otp);
 
-        log.info("OTP resent successfully to {}", user.getEmail());
+        logger.info("OTP resent successfully to {}", user.getEmail());
     }
 }
