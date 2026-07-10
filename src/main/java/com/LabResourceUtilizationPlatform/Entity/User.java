@@ -46,11 +46,6 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    //Student and Employee can enter their registration id
-    @Column(unique = true)
-    private String registrationId;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="institution_id", nullable = false)
     private Institution institution;

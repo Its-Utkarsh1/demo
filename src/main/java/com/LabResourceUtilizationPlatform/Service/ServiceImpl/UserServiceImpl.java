@@ -25,8 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -52,10 +53,6 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByPhoneNumber(request.getPhoneNumber())){
             throw new RuntimeException("Phone number already exists.");
         }
-        if(userRepository.existsByRegistrationId(request.getRegistrationId())){
-            throw new RuntimeException("Registration ID already exists.");
-        }
-
 
         //Finding either role exists or not
         Role role = roleRepository.findByRoleName(request.getRole())
@@ -77,7 +74,6 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
-                .registrationId(request.getRegistrationId())
                 .role(role)
                 .emailVerified(false)
                 .institution(institution)
@@ -101,37 +97,22 @@ public class UserServiceImpl implements UserService {
         }
         logger.info("User Registered: {}",request.getEmail());
 
-        UserResponse response = modelMapper.map(savedUser,UserResponse.class);
-        response.setInstitution(savedUser.getInstitution().getName());
-        response.setRole(savedUser.getRole().getRoleName().name());
-        response.setDepartment(savedUser.getDepartment().getName());
-        return response;
+        return mapToResponse(savedUser);
     }
 
     @Override
     @Cacheable(value = "users", key = "#email")
     public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found."));
-
-        UserResponse userResponse = modelMapper.map(user,UserResponse.class);
-
-        userResponse.setRole(user.getRole().getRoleName().name());
-        userResponse.setInstitution(user.getInstitution().getName());
-        userResponse.setDepartment(user.getDepartment().getName());
-        return userResponse;
+        return mapToResponse(user);
     }
 
     @Override
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll()
+    public List<UserResponse> getAllUserByInstitutionCode(String institutionCode) {
+        return userRepository.findByInstitution_Code(institutionCode)
                 .stream()
-                .map(user-> {
-                    UserResponse userResponse = modelMapper.map(user,UserResponse.class);
-                    userResponse.setRole(user.getRole().getRoleName().name());
-                    userResponse.setInstitution(user.getInstitution().getName());
-                    userResponse.setDepartment(user.getDepartment().getName());
-                    return userResponse;
-                }).toList();
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override
@@ -159,12 +140,6 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Phone number already exists.");
         }
 
-        // Validate registration ID
-        if (!user.getRegistrationId().equals(request.getRegistrationId())
-                && userRepository.existsByRegistrationId(request.getRegistrationId())) {
-            throw new RuntimeException("Registration ID already exists.");
-        }
-
         Role role = roleRepository.findByRoleName(request.getRole())
                 .orElseThrow(() -> new RuntimeException("Role not found."));
 
@@ -180,7 +155,6 @@ public class UserServiceImpl implements UserService {
 
         user.setFullName(request.getFullName());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setRegistrationId(request.getRegistrationId());
         user.setRole(role);
         user.setInstitution(institution);
         user.setDepartment(department);
@@ -194,12 +168,7 @@ public class UserServiceImpl implements UserService {
 
         logger.info("User updated: {}", updatedUser.getEmail());
 
-        UserResponse response = modelMapper.map(updatedUser, UserResponse.class);
-        response.setRole(updatedUser.getRole().getRoleName().name());
-        response.setInstitution(updatedUser.getInstitution().getName());
-        response.setDepartment(updatedUser.getDepartment().getName());
-
-        return response;
+       return mapToResponse(updatedUser);
     }
 
     @Override
@@ -209,5 +178,15 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(user);
         logger.info("User Deleted : {}", user.getEmail());
+    }
+
+    private UserResponse mapToResponse(User user) {
+
+        UserResponse response = modelMapper.map(user, UserResponse.class);
+        response.setRole(user.getRole().getRoleName().name());
+        response.setInstitution(user.getInstitution().getName());
+        response.setDepartment(user.getDepartment().getName());
+
+        return response;
     }
 }

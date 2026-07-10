@@ -1,6 +1,7 @@
 package com.LabResourceUtilizationPlatform.Controller;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.LoginRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.RefreshTokenRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.ResendOtpRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.VerifyEmailRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.AuthResponse;
@@ -35,5 +36,14 @@ public class AuthController {
 
         authService.resendOtp(request);
         return ResponseEntity.ok("OTP sent successfully.");
+    }
+    
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> refreshToken(
+            @RequestBody RefreshTokenRequest request) {
+
+        return ResponseEntity.ok(
+                authService.refreshToken(request)
+        );
     }
 }

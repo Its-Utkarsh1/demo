@@ -14,7 +14,6 @@ public class UserResponse {
     private String email;
     private Boolean emailVerified;
     private String phoneNumber;
-    private String registrationId;
     private String role;
     private String institution;
     private String department;

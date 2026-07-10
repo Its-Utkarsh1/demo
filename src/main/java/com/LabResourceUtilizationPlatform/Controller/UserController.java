@@ -31,10 +31,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    @GetMapping("institutionCode/{institutionCode}")
+    public ResponseEntity<List<UserResponse>> getAllUserByInstitutionCode(@PathVariable String institutionCode) {
 
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ResponseEntity.ok(userService.getAllUserByInstitutionCode(institutionCode));
     }
 
     @PutMapping

@@ -28,15 +28,11 @@ public class UpdateUserRequest{
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
-    @NotBlank(message = "Registration ID is required")
-    private String registrationId;
-
     @NotNull(message = "Role is required")
     private RoleName role;
 
     @NotNull(message = "Institution name is required")
     private String institutionName;
-
 
     @NotNull(message = "Institution code is required")
     private String institutionCode;

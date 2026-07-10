@@ -1,6 +1,7 @@
 package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.LoginRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.RefreshTokenRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.ResendOtpRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.VerifyEmailRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.AuthResponse;
@@ -125,5 +126,37 @@ public class AuthServiceImpl implements AuthService {
         emailService.sendOtpByEmail(user.getEmail(), otp);
 
         logger.info("OTP resent successfully to {}", user.getEmail());
+    }
+
+    @Override
+    public AuthResponse refreshToken(RefreshTokenRequest request) {
+
+        if (!jwtUtils.validateRefreshToken(request.getRefreshToken())) {
+            throw new RuntimeException("Invalid or expired refresh token.");
+        }
+
+        String email = jwtUtils.getUsernameFromRefreshToken(
+                request.getRefreshToken());
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(email);
+
+        String newAccessToken =
+                jwtUtils.generateAccessToken(userDetails);
+
+        return AuthResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(request.getRefreshToken())
+                .tokenType("Bearer")
+                .userId(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .role(user.getRole().getRoleName().name())
+                .institutionName(user.getInstitution().getName())
+                .emailVerified(user.getEmailVerified())
+                .build();
     }
 }

@@ -105,9 +105,7 @@ public class JwtUtils {
                     .verifyWith(refreshKey())
                     .build()
                     .parseSignedClaims(token);
-
             return true;
-
         } catch (MalformedJwtException e) {
             logger.error("Invalid refresh token");
         } catch (ExpiredJwtException e) {
