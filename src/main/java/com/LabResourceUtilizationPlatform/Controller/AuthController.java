@@ -1,9 +1,6 @@
 package com.LabResourceUtilizationPlatform.Controller;
 
-import com.LabResourceUtilizationPlatform.Dtos.Request.LoginRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.RefreshTokenRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.ResendOtpRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.VerifyEmailRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.*;
 import com.LabResourceUtilizationPlatform.Dtos.Response.AuthResponse;
 import com.LabResourceUtilizationPlatform.Service.ServiceImpl.AuthServiceImpl;
 import jakarta.validation.Valid;
@@ -12,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -37,7 +35,25 @@ public class AuthController {
         authService.resendOtp(request);
         return ResponseEntity.ok("OTP sent successfully.");
     }
-    
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
+            @RequestBody @Valid ForgotPasswordRequest request) {
+
+        authService.forgotPassword(request);
+
+        return ResponseEntity.ok("OTP sent successfully.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody @Valid ResetPasswordRequest request) {
+
+        authService.resetPassword(request);
+
+        return ResponseEntity.ok("Password updated successfully.");
+    }
+
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(
             @RequestBody RefreshTokenRequest request) {

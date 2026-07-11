@@ -1,9 +1,6 @@
 package com.LabResourceUtilizationPlatform.Service;
 
-import com.LabResourceUtilizationPlatform.Dtos.Request.LoginRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.RefreshTokenRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.ResendOtpRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.VerifyEmailRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.*;
 import com.LabResourceUtilizationPlatform.Dtos.Response.AuthResponse;
 
 public interface AuthService {
@@ -15,4 +12,8 @@ public interface AuthService {
     void resendOtp(ResendOtpRequest request);
 
     AuthResponse refreshToken(RefreshTokenRequest request);
+
+    void forgotPassword(ForgotPasswordRequest request);
+
+    void resetPassword(ResetPasswordRequest request);
 }

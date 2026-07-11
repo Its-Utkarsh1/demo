@@ -1,9 +1,6 @@
 package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 
-import com.LabResourceUtilizationPlatform.Dtos.Request.LoginRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.RefreshTokenRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.ResendOtpRequest;
-import com.LabResourceUtilizationPlatform.Dtos.Request.VerifyEmailRequest;
+import com.LabResourceUtilizationPlatform.Dtos.Request.*;
 import com.LabResourceUtilizationPlatform.Dtos.Response.AuthResponse;
 import com.LabResourceUtilizationPlatform.Entity.User;
 import com.LabResourceUtilizationPlatform.Repository.UserRepository;
@@ -18,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -35,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, String> redisTemplate;
+    private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     @Override
@@ -126,6 +125,52 @@ public class AuthServiceImpl implements AuthService {
         emailService.sendOtpByEmail(user.getEmail(), otp);
 
         logger.info("OTP resent successfully to {}", user.getEmail());
+    }
+
+    @Override
+    public void forgotPassword(ForgotPasswordRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        String otp = otpService.generateOtp();
+
+        redisTemplate.opsForValue().set(
+                "reset-otp:" + user.getEmail(),
+                otp,
+                Duration.ofMinutes(10)
+        );
+
+        emailService.sendOtpByEmail(user.getEmail(), otp);
+
+        logger.info("Password reset OTP sent to {}", user.getEmail());
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        String storedOtp = redisTemplate.opsForValue()
+                .get("reset-otp:" + request.getEmail());
+
+        if (storedOtp == null) {
+            throw new RuntimeException("OTP has expired.");
+        }
+
+        if (!storedOtp.equals(request.getOtp())) {
+            throw new RuntimeException("Invalid OTP.");
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+
+        redisTemplate.delete("reset-otp:" + request.getEmail());
+
+        logger.info("Password reset successfully for {}", user.getEmail());
     }
 
     @Override
