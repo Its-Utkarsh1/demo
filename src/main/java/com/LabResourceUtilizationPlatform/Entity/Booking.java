@@ -14,14 +14,19 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Human-readable booking number
+    @Column(nullable = false, unique = true)
+    private String bookingCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable =false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,12 +39,20 @@ public class Booking {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 500)
     private String purpose;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status;
+
+    // Manager's rejection reason
+    @Column(length = 500)
+    private String rejectionReason;
+
+    // Optional technician/manager remarks
+    @Column(length = 500)
+    private String remarks;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

@@ -1,5 +1,8 @@
 package com.LabResourceUtilizationPlatform.Dtos.Request;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,13 +13,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBookingRequest {
-    private Long bookingId;
-    private String equipmentName;
-    private String bookedBy;
-    private String institutionName;
-    private String departmentName;
+
+    @NotNull(message = "Equipment ID is required")
+    private Long equipmentId;
+
+    @NotNull(message = "Start time is required")
+    @Future(message = "Start time must be in the future")
     private LocalDateTime startTime;
+
+    @NotNull(message = "End time is required")
+    @Future(message = "End time must be in the future")
     private LocalDateTime endTime;
-    private String bookingStatus;
-    private LocalDateTime createdAt;
+
+    @NotBlank(message = "Purpose is required")
+    private String purpose;
 }

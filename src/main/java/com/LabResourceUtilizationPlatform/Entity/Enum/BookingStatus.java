@@ -2,9 +2,8 @@ package com.LabResourceUtilizationPlatform.Entity.Enum;
 
 public enum BookingStatus {
     PENDING,
-    CONFIRMED,
-    IN_USE,
-    COMPLETED,
+    APPROVED,
+    REJECTED,
     CANCELLED,
-    NO_SHOW
+    COMPLETED
 }
