@@ -3,11 +3,13 @@ package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateEquipmentRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateEquipmentRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.EquipmentResponse;
+import com.LabResourceUtilizationPlatform.Entity.Enum.EquipmentStatus;
 import com.LabResourceUtilizationPlatform.Entity.Equipment;
 import com.LabResourceUtilizationPlatform.Entity.Lab;
 import com.LabResourceUtilizationPlatform.Repository.EquipmentRepository;
 import com.LabResourceUtilizationPlatform.Repository.LabRepository;
 import com.LabResourceUtilizationPlatform.Service.EquipmentService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -16,7 +18,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +64,42 @@ public class EquipmentServiceImpl implements EquipmentService {
         logger.info("Equipment created: {}", savedEquipment.getEquipmentCode());
 
         return mapToResponse(savedEquipment);
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Long> getEquipmentStatusCounts(String institutionCode) {
+
+        List<Equipment> equipments =
+                equipmentRepository.findByLab_Institution_Code(institutionCode);
+
+        Map<String, Long> counts = new HashMap<>();
+
+        counts.put(
+                "AVAILABLE",
+                equipments.stream()
+                        .filter(e -> e.getStatus() == EquipmentStatus.AVAILABLE)
+                        .count());
+
+        counts.put(
+                "IN_USE",
+                equipments.stream()
+                        .filter(e -> e.getStatus() == EquipmentStatus.IN_USE)
+                        .count());
+
+        counts.put(
+                "MAINTENANCE",
+                equipments.stream()
+                        .filter(e -> e.getStatus() == EquipmentStatus.UNDER_MAINTENANCE)
+                        .count());
+
+        counts.put(
+                "OUT_OF_SERVICE",
+                equipments.stream()
+                        .filter(e -> e.getStatus() == EquipmentStatus.OUT_OF_SERVICE)
+                        .count());
+
+        return counts;
     }
 
     @Override

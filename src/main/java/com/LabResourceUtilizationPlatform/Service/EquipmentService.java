@@ -5,6 +5,7 @@ import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateEquipmentRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.EquipmentResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EquipmentService {
 
@@ -25,4 +26,6 @@ public interface EquipmentService {
             String equipmentCode,
             String labCode,
             String institutionCode);
+
+    Map<String, Long> getEquipmentStatusCounts(String institutionCode);
 }

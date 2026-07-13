@@ -2,6 +2,7 @@ package com.LabResourceUtilizationPlatform.Controller;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.*;
 import com.LabResourceUtilizationPlatform.Dtos.Response.AuthResponse;
+import com.LabResourceUtilizationPlatform.Dtos.Response.UserResponse;
 import com.LabResourceUtilizationPlatform.Service.ServiceImpl.AuthServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,12 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+
+        return ResponseEntity.ok(authService.getCurrentUser());
     }
 
     @PostMapping("/verify-email")

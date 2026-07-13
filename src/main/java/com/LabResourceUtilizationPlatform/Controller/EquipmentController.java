@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -57,6 +58,14 @@ public class EquipmentController {
 
         return ResponseEntity.ok(
                 equipmentService.updateEquipment(request));
+    }
+
+    @GetMapping("/status-counts/{institutionCode}")
+    public ResponseEntity<Map<String, Long>> getEquipmentStatusCounts(
+            @PathVariable String institutionCode) {
+
+        return ResponseEntity.ok(
+                equipmentService.getEquipmentStatusCounts(institutionCode));
     }
 
     @DeleteMapping("/{institutionCode}/{labCode}/{equipmentCode}")

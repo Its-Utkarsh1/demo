@@ -31,4 +31,6 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
     boolean existsByEquipmentNameAndLab(
             String equipmentName,
             Lab lab);
+
+    List<Equipment> findByLab_Institution_Code(String institutionCode);
 }
