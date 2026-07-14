@@ -2,6 +2,7 @@ package com.LabResourceUtilizationPlatform.Service;
 
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateBookingRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.BookingResponse;
+import com.LabResourceUtilizationPlatform.Dtos.Response.WeeklyUtilizationResponse;
 import com.LabResourceUtilizationPlatform.Entity.Enum.BookingStatus;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
@@ -35,4 +36,5 @@ public interface BookingService {
             Integer year,
             Long equipmentId,
             Long labId);
+
 }
