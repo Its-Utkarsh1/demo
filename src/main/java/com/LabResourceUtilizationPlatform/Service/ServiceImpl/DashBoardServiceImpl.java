@@ -1,12 +1,14 @@
 package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 
+import com.LabResourceUtilizationPlatform.Dtos.Response.TechnicianDashboardResponse;
 import com.LabResourceUtilizationPlatform.Dtos.Response.WeeklyUtilizationResponse;
 import com.LabResourceUtilizationPlatform.Entity.Booking;
+import com.LabResourceUtilizationPlatform.Entity.Enum.EquipmentStatus;
 import com.LabResourceUtilizationPlatform.Entity.Enum.RoleName;
 import com.LabResourceUtilizationPlatform.Entity.User;
 import com.LabResourceUtilizationPlatform.Repository.BookingRepository;
+import com.LabResourceUtilizationPlatform.Repository.EquipmentRepository;
 import com.LabResourceUtilizationPlatform.Repository.UserRepository;
-import com.LabResourceUtilizationPlatform.Service.BookingService;
 import com.LabResourceUtilizationPlatform.Service.DashBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,6 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import static com.LabResourceUtilizationPlatform.Entity.Enum.RoleName.STUDENT;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class DashBoardServiceImpl implements DashBoardService {
 
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final EquipmentRepository equipmentRepository;
 
     @Override
     public WeeklyUtilizationResponse getWeeklyUtilization() {
@@ -60,7 +62,9 @@ public class DashBoardServiceImpl implements DashBoardService {
                 return getFacultyWeeklyUtilization(user);
 
             case LAB_TECHNICIAN:
-                return getTechnicianWeeklyUtilization(user);
+                throw new RuntimeException(
+                        "Weekly utilization is not available for Lab Technician."
+                );
 
             case LAB_MANAGER:
                 return getLabManagerWeeklyUtilization(user);
@@ -133,22 +137,36 @@ public class DashBoardServiceImpl implements DashBoardService {
         return calculateWeeklyHours(bookings);
     }
 
-    private WeeklyUtilizationResponse getTechnicianWeeklyUtilization(User user) {
+    public TechnicianDashboardResponse getTechnicianDashboard(User user) {
 
-        LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
+        Long departmentId = user.getDepartment().getId();
 
-        LocalDateTime weekStart = monday.atStartOfDay();
-
-        LocalDateTime weekEnd = monday.plusDays(6).atTime(23,59,59);
-
-        List<Booking> bookings =
-                bookingRepository.findDepartmentBookings(
-                        user.getDepartment().getId(),
-                        weekStart,
-                        weekEnd
-                );
-
-        return calculateWeeklyHours(bookings);
+        return TechnicianDashboardResponse.builder()
+                .availableEquipment(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.AVAILABLE
+                        )
+                )
+                .inUseEquipment(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.IN_USE
+                        )
+                )
+                .underMaintenance(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.UNDER_MAINTENANCE
+                        )
+                )
+                .outOfService(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.OUT_OF_SERVICE
+                        )
+                )
+                .build();
     }
 
     private WeeklyUtilizationResponse getLabManagerWeeklyUtilization(User user) {
@@ -243,6 +261,45 @@ public class DashBoardServiceImpl implements DashBoardService {
         }
 
         return new WeeklyUtilizationResponse(weekly);
+    }
+
+    @Override
+    public TechnicianDashboardResponse getTechnicianDashboard() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Long departmentId = user.getDepartment().getId();
+
+        return TechnicianDashboardResponse.builder()
+                .availableEquipment(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.AVAILABLE
+                        )
+                )
+                .inUseEquipment(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.IN_USE
+                        )
+                )
+                .underMaintenance(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.UNDER_MAINTENANCE
+                        )
+                )
+                .outOfService(
+                        equipmentRepository.countByLab_Department_IdAndStatus(
+                                departmentId,
+                                EquipmentStatus.OUT_OF_SERVICE
+                        )
+                )
+                .build();
     }
 
 }

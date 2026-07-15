@@ -1,5 +1,6 @@
 package com.LabResourceUtilizationPlatform.Repository;
 
+import com.LabResourceUtilizationPlatform.Entity.Enum.EquipmentStatus;
 import com.LabResourceUtilizationPlatform.Entity.Equipment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.LabResourceUtilizationPlatform.Entity.Lab;
@@ -33,4 +34,6 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
             Lab lab);
 
     List<Equipment> findByLab_Institution_Code(String institutionCode);
+
+    long countByLab_Department_IdAndStatus(Long departmentId, EquipmentStatus status);
 }

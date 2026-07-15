@@ -1,6 +1,7 @@
 package com.LabResourceUtilizationPlatform.Controller;
 
 
+import com.LabResourceUtilizationPlatform.Dtos.Response.TechnicianDashboardResponse;
 import com.LabResourceUtilizationPlatform.Dtos.Response.WeeklyUtilizationResponse;
 import com.LabResourceUtilizationPlatform.Service.DashBoardService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,10 @@ public class DashBoardController {
         return ResponseEntity.ok(
                 dashboardService.getWeeklyUtilization()
         );
+    }
 
+    @GetMapping("/technician")
+    public TechnicianDashboardResponse getTechnicianDashboard() {
+        return dashboardService.getTechnicianDashboard();
     }
 }

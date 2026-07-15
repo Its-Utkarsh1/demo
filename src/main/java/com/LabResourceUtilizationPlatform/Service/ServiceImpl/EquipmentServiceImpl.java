@@ -168,9 +168,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         equipment.setStatus(request.getStatus());
 
         Equipment updatedEquipment = equipmentRepository.save(equipment);
-
         logger.info("Equipment updated: {}", updatedEquipment.getEquipmentCode());
-
         return mapToResponse(updatedEquipment);
     }
 
@@ -186,7 +184,6 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .orElseThrow(() -> new RuntimeException("Equipment not found."));
 
         equipmentRepository.delete(equipment);
-
         logger.info("Equipment deleted: {}", equipment.getEquipmentCode());
     }
 
@@ -199,7 +196,6 @@ public class EquipmentServiceImpl implements EquipmentService {
         response.setLab(equipment.getLab().getLabName());
         response.setDepartment(equipment.getLab().getDepartment().getName());
         response.setInstitution(equipment.getLab().getInstitution().getName());
-
         return response;
     }
 }

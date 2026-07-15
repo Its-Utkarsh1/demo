@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     // Create Booking
+    @PreAuthorize("hasAnyRole('STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
     @PostMapping
     public ResponseEntity<BookingResponse> createBooking(
             @Valid @RequestBody CreateBookingRequest request)
@@ -35,6 +37,7 @@ public class BookingController {
     }
 
     // Get All Bookings
+    @PreAuthorize("hasAnyRole('LAB_MANAGER','DEPARTMENT_HEAD','INSTITUTION_ADMIN','SYSTEM_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<BookingResponse>> getAllBookings(
 
@@ -78,6 +81,7 @@ public class BookingController {
     }
 
     // Update Booking
+    @PreAuthorize("hasAnyRole('STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
     @PutMapping("/{bookingCode}")
     public ResponseEntity<BookingResponse> updateBooking(
             @PathVariable String bookingCode,
@@ -88,6 +92,7 @@ public class BookingController {
     }
 
     // Approve Booking
+    @PreAuthorize("hasRole('LAB_MANAGER')")
     @PutMapping("/{bookingCode}/approve")
     public ResponseEntity<String> approveBooking(
             @PathVariable String bookingCode) {
@@ -97,6 +102,7 @@ public class BookingController {
     }
 
     // Cancel Booking
+    @PreAuthorize("hasAnyRole('STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
     @PutMapping("/{bookingCode}/cancel")
     public ResponseEntity<String> cancelBooking(
             @PathVariable String bookingCode) {
