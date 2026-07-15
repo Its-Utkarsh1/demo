@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,7 +27,7 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_equipment_code", columnList = "equipment_code")
         }
 )
-public class Equipment{
+public class Equipment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,27 @@ public class Equipment{
 
     @Column(name = "equipment_code", nullable = false)
     private String equipmentCode;
+
+    @Column(nullable = false)
+    private String manufacturer;
+
+    @Column(nullable = false)
+    private String model;
+
+    @Column(length = 2000)
+    private String description;
+
+    @Column(length = 5000)
+    private String specifications;
+
+    @Column
+    private String imageUrl;
+
+    @Column
+    private LocalDate purchaseDate;
+
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal price;
 
     @Column(nullable = false)
     @Min(value = 1, message = "Quantity must be at least 1")
@@ -56,5 +79,4 @@ public class Equipment{
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
 }
