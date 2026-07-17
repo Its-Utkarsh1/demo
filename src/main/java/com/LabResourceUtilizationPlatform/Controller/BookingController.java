@@ -27,7 +27,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     // Create Booking
-    @PreAuthorize("hasAnyRole('STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
     @PostMapping
     public ResponseEntity<BookingResponse> createBooking(
             @Valid @RequestBody CreateBookingRequest request)
@@ -81,7 +81,7 @@ public class BookingController {
     }
 
     // Update Booking
-    @PreAuthorize("hasAnyRole('STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
     @PutMapping("/{bookingCode}")
     public ResponseEntity<BookingResponse> updateBooking(
             @PathVariable String bookingCode,
@@ -92,7 +92,7 @@ public class BookingController {
     }
 
     // Approve Booking
-    @PreAuthorize("hasRole('LAB_MANAGER')")
+    @PreAuthorize("hasAnyRole('LAB_MANAGER','SYSTEM_ADMIN')")
     @PutMapping("/{bookingCode}/approve")
     public ResponseEntity<String> approveBooking(
             @PathVariable String bookingCode) {
@@ -102,13 +102,23 @@ public class BookingController {
     }
 
     // Cancel Booking
-    @PreAuthorize("hasAnyRole('STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','STUDENT','RESEARCHER','RESEARCH_ASSOCIATE','RESEARCH_SCIENTIST','PROFESSOR','ASSOCIATE_PROFESSOR','ASSISTANT_PROFESSOR')")
     @PutMapping("/{bookingCode}/cancel")
     public ResponseEntity<String> cancelBooking(
             @PathVariable String bookingCode) {
 
         return ResponseEntity.ok(
                 bookingService.cancelBooking(bookingCode));
+    }
+
+    @PatchMapping("/{bookingCode}/manager/cancel")
+    @PreAuthorize("hasAnyRole('LAB_MANAGER','SYSTEM_ADMIN')")
+    public ResponseEntity<String> cancelBookingByManager(
+            @PathVariable String bookingCode) {
+
+        return ResponseEntity.ok(
+                bookingService.cancelBookingByManager(bookingCode)
+        );
     }
 
     // Calendar View

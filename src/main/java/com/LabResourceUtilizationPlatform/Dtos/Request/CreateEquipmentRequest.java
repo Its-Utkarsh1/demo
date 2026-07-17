@@ -1,10 +1,11 @@
 package com.LabResourceUtilizationPlatform.Dtos.Request;
 
 import com.LabResourceUtilizationPlatform.Entity.Enum.EquipmentStatus;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -19,16 +20,35 @@ public class CreateEquipmentRequest {
     @NotBlank(message = "Equipment code is required.")
     private String equipmentCode;
 
-    @NotNull(message = "Quantity is required.")
-    @Min(value = 1, message = "Quantity must be at least 1.")
+    @NotBlank(message = "Manufacturer is required.")
+    private String manufacturer;
+
+    @NotBlank(message = "Model is required.")
+    private String model;
+
+    private String description;
+
+    private String specifications;
+
+    private String imageUrl;
+
+    @PastOrPresent
+    private LocalDate purchaseDate;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
+    private BigDecimal price;
+
+    @NotNull
+    @Min(1)
     private Integer quantity;
 
-    @NotNull(message = "Equipment status is required.")
+    @NotNull
     private EquipmentStatus status;
 
-    @NotBlank(message = "Lab code is required.")
-    private String labCode;
-
-    @NotBlank(message = "Institution code is required.")
+    @NotBlank
     private String institutionCode;
+
+    @NotBlank
+    private String labCode;
 }

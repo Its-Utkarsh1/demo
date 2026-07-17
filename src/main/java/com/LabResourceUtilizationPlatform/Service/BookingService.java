@@ -3,6 +3,7 @@ package com.LabResourceUtilizationPlatform.Service;
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateBookingRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.BookingResponse;
 import com.LabResourceUtilizationPlatform.Dtos.Response.WeeklyUtilizationResponse;
+import com.LabResourceUtilizationPlatform.Entity.Booking;
 import com.LabResourceUtilizationPlatform.Entity.Enum.BookingStatus;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,9 @@ public interface BookingService {
 
     String cancelBooking(String bookingCode);
 
-    public List<BookingResponse> getCalendarBookings(
+    String cancelBookingByManager(String bookingCode);
+
+     List<BookingResponse> getCalendarBookings(
             Integer month,
             Integer year,
             Long equipmentId,

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class LabController {
 
     private final LabService labService;
 
+    @PreAuthorize("hasAnyRole('INSTITUTION_ADMIN','SYSTEM_ADMIN')")
     @PostMapping
     public ResponseEntity<LabResponse> createLab(
             @Valid @RequestBody CreateLabRequest request) {
@@ -44,6 +46,7 @@ public class LabController {
                 labService.getAllLabs(institutionCode));
     }
 
+    @PreAuthorize("hasAnyRole('INSTITUTION_ADMIN','SYSTEM_ADMIN')")
     @PutMapping
     public ResponseEntity<LabResponse> updateLab(
             @Valid @RequestBody UpdateLabRequest request) {
@@ -52,6 +55,7 @@ public class LabController {
                 labService.updateLab(request));
     }
 
+    @PreAuthorize("hasAnyRole('INSTITUTION_ADMIN','SYSTEM_ADMIN')")
     @DeleteMapping("/{institutionCode}/{labCode}")
     public ResponseEntity<String> deleteLab(
             @PathVariable String institutionCode,

@@ -11,16 +11,14 @@ import lombok.*;
 public class EquipmentResponse {
 
     private String equipmentName;
-
     private String equipmentCode;
-
-    private Integer quantity;
-
+    private String model;
+    private String description;
+    private String specifications;
+    private String imageUrl;
     private String status;
-
     private String lab;
-
     private String department;
-
     private String institution;
+    private Integer availableQuantity;
 }

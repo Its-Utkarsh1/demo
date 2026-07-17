@@ -19,6 +19,7 @@ public class BookingResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String purpose;
+    private Integer quantity;
     private BookingStatus status;
     private LocalDateTime createdAt;
 }

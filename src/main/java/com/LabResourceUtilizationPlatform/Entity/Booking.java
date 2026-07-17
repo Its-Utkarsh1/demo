@@ -2,6 +2,8 @@ package com.LabResourceUtilizationPlatform.Entity;
 
 import com.LabResourceUtilizationPlatform.Entity.Enum.BookingStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,7 +11,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "bookings")
+@Table(
+        name = "bookings",
+        indexes = {
+                @Index(name = "idx_booking_equipment", columnList = "equipment_id"),
+                @Index(name = "idx_booking_user", columnList = "user_id"),
+                @Index(name = "idx_booking_status", columnList = "status")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,9 +55,10 @@ public class Booking {
     @Column(nullable = false)
     private BookingStatus status;
 
-    // Manager's rejection reason
-    @Column(length = 500)
-    private String rejectionReason;
+    @NotNull(message = "Quantity is required.")
+    @Min(value = 1, message = "Quantity must be at least 1.")
+    @Column(nullable = false)
+    private Integer quantity;
 
     // Optional technician/manager remarks
     @Column(length = 500)
