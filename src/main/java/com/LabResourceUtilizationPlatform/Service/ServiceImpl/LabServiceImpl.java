@@ -62,6 +62,21 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    public List<LabResponse> getLabsByDepartment(
+            String institutionCode,
+            String departmentName) {
+
+        List<Lab> labs = labRepository
+                .findByInstitution_CodeAndDepartment_Name(
+                        institutionCode,
+                        departmentName);
+
+        return labs.stream()
+                .map(lab -> modelMapper.map(lab, LabResponse.class))
+                .toList();
+    }
+
+    @Override
     @Cacheable(value = "labs", key = "#institutionCode + ':' + #labCode")
     public LabResponse getLabByCode(String labCode, String institutionCode) {
         Lab lab = labRepository

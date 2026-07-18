@@ -37,4 +37,6 @@ public class CreateUserRequest{
 
     @NotNull(message = "Department name is required")
     private String departmentName;
+
+    private String labCode;
 }

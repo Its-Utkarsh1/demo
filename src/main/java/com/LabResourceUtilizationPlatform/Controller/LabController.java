@@ -38,6 +38,17 @@ public class LabController {
                 labService.getLabByCode(labCode, institutionCode));
     }
 
+    @GetMapping("/department")
+    public ResponseEntity<List<LabResponse>> getLabsByDepartment(
+            @RequestParam String institutionCode,
+            @RequestParam String departmentName) {
+
+        return ResponseEntity.ok(
+                labService.getLabsByDepartment(
+                        institutionCode,
+                        departmentName));
+    }
+
     @GetMapping("/{institutionCode}")
     public ResponseEntity<List<LabResponse>> getAllLabs(
             @PathVariable String institutionCode) {

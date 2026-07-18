@@ -70,7 +70,9 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole().getRoleName().name())
+                .institutionCode(user.getInstitution().getCode())
                 .institutionName(user.getInstitution().getName())
+                .departmentName(user.getDepartment().getName())
                 .emailVerified(user.getEmailVerified())
                 .build();
     }
@@ -224,7 +226,9 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole().getRoleName().name())
+                .institutionCode(user.getInstitution().getCode())
                 .institutionName(user.getInstitution().getName())
+                .departmentName(user.getDepartment().getName())
                 .emailVerified(user.getEmailVerified())
                 .build();
     }

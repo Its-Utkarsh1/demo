@@ -34,4 +34,6 @@ public interface EquipmentService {
             String equipmentCode,
             String labCode,
             String institutionCode);
+
+    List<EquipmentResponse> getDepartmentEquipment(String institutionCode, String departmentName);
 }

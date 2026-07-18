@@ -27,4 +27,16 @@ public interface LabRepository extends JpaRepository<Lab, Long> {
     List<Lab> findByInstitution_Code(String institutionCode);
 
     Optional<Lab> findByLabCodeAndInstitution_Code(String labCode, String institutionCode);
+
+    List<Lab> findByInstitution_CodeAndDepartment_Name(
+            String institutionCode,
+            String departmentName);
+
+    Long countByDepartmentId(Long departmentId);
+
+    Long countByInstitutionId(Long institutionId);
+
+    Optional<Lab> findByLabManagerId(Long labManagerId);
+
+    Optional<Lab> findByLabCode(String labCode);
 }

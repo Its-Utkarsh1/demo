@@ -60,7 +60,16 @@ public class SecurityConfig {
                         ).hasAnyRole(
                                 "SYSTEM_ADMIN",
                                 "INSTITUTION_ADMIN",
-                                "DEPARTMENT_HEAD"
+                                "DEPARTMENT_HEAD",
+                                "LAB_MANAGER",
+                                "LAB_TECHNICIAN",
+                                "PROFESSOR",
+                                "ASSOCIATE_PROFESSOR",
+                                "ASSISTANT_PROFESSOR",
+                                "RESEARCHER",
+                                "RESEARCH_ASSOCIATE",
+                                "RESEARCH_SCIENTIST",
+                                "STUDENT"
                         )
 
                         // Equipment
@@ -134,10 +143,7 @@ public class SecurityConfig {
                         // Admin/User Management
                         .requestMatchers(
                                 "/api/users/**"
-                        ).hasAnyRole(
-                                "SYSTEM_ADMIN",
-                                "INSTITUTION_ADMIN"
-                        )
+                        ).permitAll()
 
                         .anyRequest().authenticated()
                 );

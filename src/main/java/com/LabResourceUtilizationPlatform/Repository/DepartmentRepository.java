@@ -17,5 +17,5 @@ public interface DepartmentRepository extends JpaRepository<Department,Long> {
 
     boolean existsByNameAndInstitution_Code(String name, String institutionCode);
 
-
+    Long countByInstitutionId(Long institutionId);
 }

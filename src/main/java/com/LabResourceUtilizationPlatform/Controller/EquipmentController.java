@@ -31,6 +31,17 @@ public class EquipmentController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/department")
+    public ResponseEntity<List<EquipmentResponse>> getDepartmentEquipment(
+            @RequestParam String institutionCode,
+            @RequestParam String departmentName) {
+
+        return ResponseEntity.ok(
+                equipmentService.getDepartmentEquipment(
+                        institutionCode,
+                        departmentName));
+    }
+
     @GetMapping("/{institutionCode}/{labCode}/{equipmentCode}")
     public ResponseEntity<EquipmentResponse> getEquipmentByCode(
             @PathVariable String institutionCode,

@@ -41,3 +41,9 @@ jwt:
 
   refresh-secret: ${JWT_REFRESH_SECRET}
   refresh-expiration: ${JWT_REFRESH_EXPIRATION}
+
+logging:
+  level:
+    com:
+      LabResourceUtilizationPlatform:
+        Security=DEBUG:

@@ -55,6 +55,10 @@ public class Lab {
     private LabStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lab_manager_id")
+    private User labManager;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
     private Institution institution;
 

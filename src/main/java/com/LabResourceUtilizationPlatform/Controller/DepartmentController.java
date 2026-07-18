@@ -28,6 +28,7 @@ public class DepartmentController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
     @PostMapping("/search")
     public ResponseEntity<DepartmentResponse> getDepartmentByName(
             @Valid @RequestBody DepartmentRequest request) {

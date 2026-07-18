@@ -21,5 +21,8 @@ public class AuthResponse {
     private String institutionCode;
     private String institutionName;
 
+    private String departmentName;
+
+
     private boolean emailVerified;
 }

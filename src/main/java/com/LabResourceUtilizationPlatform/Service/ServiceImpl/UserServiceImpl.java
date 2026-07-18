@@ -3,15 +3,9 @@ package com.LabResourceUtilizationPlatform.Service.ServiceImpl;
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.UserResponse;
-import com.LabResourceUtilizationPlatform.Entity.Department;
+import com.LabResourceUtilizationPlatform.Entity.*;
 import com.LabResourceUtilizationPlatform.Entity.Enum.RoleName;
-import com.LabResourceUtilizationPlatform.Entity.Institution;
-import com.LabResourceUtilizationPlatform.Entity.Role;
-import com.LabResourceUtilizationPlatform.Entity.User;
-import com.LabResourceUtilizationPlatform.Repository.DepartmentRepository;
-import com.LabResourceUtilizationPlatform.Repository.InstitutionRepository;
-import com.LabResourceUtilizationPlatform.Repository.RoleRepository;
-import com.LabResourceUtilizationPlatform.Repository.UserRepository;
+import com.LabResourceUtilizationPlatform.Repository.*;
 import com.LabResourceUtilizationPlatform.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -40,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final InstitutionRepository institutionRepository;
     private final DepartmentRepository departmentRepository;
     private final ModelMapper modelMapper;
+    private final LabRepository labRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, String> redisTemplate;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -82,6 +77,23 @@ public class UserServiceImpl implements UserService {
 
 
         User savedUser = userRepository.save(user);
+
+        if (request.getRole() == RoleName.LAB_MANAGER) {
+
+            if (request.getLabCode() == null || request.getLabCode().isBlank()) {
+                throw new RuntimeException("Lab code is required for Lab Manager");
+            }
+
+            Lab lab = labRepository.findByLabCode(request.getLabCode())
+                    .orElseThrow(() -> new RuntimeException("Lab not found"));
+
+            if (lab.getLabManager() != null) {
+                throw new RuntimeException("This lab already has a manager.");
+            }
+
+            lab.setLabManager(savedUser);
+            labRepository.save(lab);
+        }
 
         String otp = otpService.generateOtp();
         redisTemplate.opsForValue().set(

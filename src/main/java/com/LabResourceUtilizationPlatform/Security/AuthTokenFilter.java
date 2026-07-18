@@ -30,6 +30,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getServletPath();
+
+
+        if (path.startsWith("/api/auth")
+                || (path.equals("/api/users")
+                && request.getMethod().equalsIgnoreCase("POST"))) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         logger.debug("AuthTokenFilter called for URL: {}", request.getRequestURI());
         try{
 

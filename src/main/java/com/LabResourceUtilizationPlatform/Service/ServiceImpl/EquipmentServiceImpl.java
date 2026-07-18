@@ -151,7 +151,21 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
 
+    @Override
+    public List<EquipmentResponse> getDepartmentEquipment(
+            String institutionCode,
+            String departmentName) {
+
+        List<Equipment> equipments =
+                equipmentRepository.findByLab_Department_NameAndLab_Department_Institution_Code(
+                        departmentName,
+                        institutionCode);
+
+        return equipments.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override

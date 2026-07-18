@@ -39,4 +39,18 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
     long countByLab_Department_IdAndStatus(Long departmentId, EquipmentStatus status);
 
 
+    Long countByStatus(EquipmentStatus equipmentStatus);
+
+    Long countByLab_Department_Id(Long id);
+
+    Long countByLab_Institution_Id(Long institutionId);
+
+    long countByLabId(Long labId);
+
+    long countByLabIdAndStatus(
+            Long labId,
+            EquipmentStatus status
+    );
+
+    List<Equipment> findByLab_Department_NameAndLab_Department_Institution_Code(String departmentName, String institutionCode);
 }

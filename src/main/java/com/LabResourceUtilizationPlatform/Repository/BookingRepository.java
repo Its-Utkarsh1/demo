@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -122,4 +124,66 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("endTime") LocalDateTime endTime,
             @Param("bookingId") Long bookingId
     );
+
+    long countByUserId(Long userId);
+    
+    long countByUserIdAndStatus(
+            Long userId,
+            BookingStatus status
+    );
+
+    long countByEquipment_Lab_Department_Id(Long departmentId);
+
+    long countByEquipment_Lab_Department_IdAndStatus(
+            Long departmentId,
+            BookingStatus status
+    );
+
+    @Query("""
+        SELECT b
+        FROM Booking b
+        WHERE b.equipment.lab.department.id = :departmentId
+        ORDER BY b.createdAt DESC
+        """)
+    List<Booking> findTop5DepartmentBookings(
+            @Param("departmentId") Long departmentId,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT b
+    FROM Booking b
+    WHERE b.user.id = :userId
+    ORDER BY b.createdAt DESC
+    """)
+    List<Booking> findTop5UserBookings(
+            @Param("userId") Long userId,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT COUNT(b)
+    FROM Booking b
+    WHERE b.equipment.lab.institution.id = :institutionId
+    """)
+    Long countByInstitutionId(@Param("institutionId") Long institutionId);
+
+    long countByEquipment_Lab_IdAndStatus(
+            Long labId,
+            BookingStatus status
+    );
+
+    @Query("""
+    SELECT COUNT(b)
+    FROM Booking b
+    WHERE b.equipment.lab.id = :labId
+    AND b.status = :status
+    AND FUNCTION('DATE', b.createdAt) = :date
+    """)
+    long countApprovedToday(
+            @Param("labId") Long labId,
+            @Param("status") BookingStatus status,
+            @Param("date") LocalDate date
+    );
+
 }

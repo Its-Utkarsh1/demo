@@ -16,4 +16,8 @@ public interface LabService {
     LabResponse updateLab(UpdateLabRequest request);
 
     void deleteLab(String labCode, String institutionCode);
+
+    List<LabResponse> getLabsByDepartment(
+            String institutionCode,
+            String departmentName);
 }
