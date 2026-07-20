@@ -40,4 +40,6 @@ public interface BookingService {
             Long equipmentId,
             Long labId);
 
+    List<BookingResponse> getPendingBookingsForLabManager();
+
 }

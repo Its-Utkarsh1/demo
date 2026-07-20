@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,6 +120,47 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found."));
         return mapToResponse(user);
     }
+
+    @Override
+    public List<UserResponse> getLabTechniciansForManager() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println("Authentication Name = " + authentication.getName());
+        System.out.println("Authentication Principal = " + authentication.getPrincipal());
+
+        User manager = userRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found."));
+
+        System.out.println("Manager Email = " + manager.getEmail());
+        System.out.println("Manager Department = " + manager.getDepartment().getName());
+
+        List<User> technicians = userRepository
+                .findByDepartment_IdAndRole_RoleName(
+                        manager.getDepartment().getId(),
+                        RoleName.LAB_TECHNICIAN
+                );
+
+        System.out.println("Technicians Found = " + technicians.size());
+
+        return technicians.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<UserResponse> getUsersByDepartment(String departmentCode) {
+
+        return userRepository
+                .findByDepartment_Name(departmentCode)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
 
     @Override
     public List<UserResponse> getAllUserByInstitutionCode(String institutionCode) {

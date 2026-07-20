@@ -12,4 +12,6 @@ public interface UserService {
     List<UserResponse> getAllUserByInstitutionCode(String institutionCode);
     UserResponse updateUser(UpdateUserRequest request);
     void deleteUser(String email);
+    List<UserResponse> getLabTechniciansForManager();
+    List<UserResponse> getUsersByDepartment(String departmentCode);
 }

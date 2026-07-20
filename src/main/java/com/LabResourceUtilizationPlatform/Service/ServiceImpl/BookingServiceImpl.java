@@ -5,9 +5,11 @@ import com.LabResourceUtilizationPlatform.Dtos.Response.BookingResponse;
 import com.LabResourceUtilizationPlatform.Entity.Booking;
 import com.LabResourceUtilizationPlatform.Entity.Enum.BookingStatus;
 import com.LabResourceUtilizationPlatform.Entity.Equipment;
+import com.LabResourceUtilizationPlatform.Entity.Lab;
 import com.LabResourceUtilizationPlatform.Entity.User;
 import com.LabResourceUtilizationPlatform.Repository.BookingRepository;
 import com.LabResourceUtilizationPlatform.Repository.EquipmentRepository;
+import com.LabResourceUtilizationPlatform.Repository.LabRepository;
 import com.LabResourceUtilizationPlatform.Repository.UserRepository;
 import com.LabResourceUtilizationPlatform.Service.BookingService;
 import jakarta.transaction.Transactional;
@@ -33,6 +35,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final EquipmentRepository equipmentRepository;
     private final ModelMapper modelMapper;
+    private final LabRepository labRepository;
 
     @Override
     public BookingResponse createBooking(CreateBookingRequest request) throws BadRequestException {
@@ -109,6 +112,29 @@ public class BookingServiceImpl implements BookingService {
         booking = bookingRepository.save(booking);
 
         return mapToResponse(booking);
+    }
+
+    @Override
+    @Transactional
+    public List<BookingResponse> getPendingBookingsForLabManager() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User manager = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        List<Booking> bookings =
+                bookingRepository.findByEquipment_Lab_LabManager_IdAndStatus(
+                        manager.getId(),
+                        BookingStatus.PENDING
+                );
+
+        return bookings.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override

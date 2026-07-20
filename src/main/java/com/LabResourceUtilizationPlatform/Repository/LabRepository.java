@@ -39,4 +39,9 @@ public interface LabRepository extends JpaRepository<Lab, Long> {
     Optional<Lab> findByLabManagerId(Long labManagerId);
 
     Optional<Lab> findByLabCode(String labCode);
+
+    boolean existsByLabManager_Id(Long id);
+
+    Optional<Lab> findByLabManager_Id(Long managerId);
+
 }

@@ -54,8 +54,8 @@ public class Lab {
     @Enumerated(EnumType.STRING)
     private LabStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lab_manager_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lab_manager_id", unique = true)
     private User labManager;
 
     @ManyToOne(fetch = FetchType.LAZY)

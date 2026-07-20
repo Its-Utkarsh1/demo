@@ -16,6 +16,7 @@ public class EquipmentResponse {
     private String description;
     private String specifications;
     private String imageUrl;
+    private String labCode;
     private String status;
     private String lab;
     private String department;

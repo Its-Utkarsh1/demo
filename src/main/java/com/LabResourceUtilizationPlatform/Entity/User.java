@@ -54,6 +54,7 @@ public class User {
     @JoinColumn(name="department_id", nullable = false)
     private Department department;
 
+
     @CreationTimestamp
     @Column(nullable = false,updatable = false)
     private LocalDateTime createdAt;

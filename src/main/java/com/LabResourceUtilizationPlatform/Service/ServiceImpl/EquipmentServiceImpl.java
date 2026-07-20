@@ -252,6 +252,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .description(equipment.getDescription())
                 .specifications(equipment.getSpecifications())
                 .imageUrl(equipment.getImageUrl())
+                .labCode(equipment.getLab().getLabCode())
                 .availableQuantity(
                         Math.max(0, equipment.getQuantity() - bookedQuantity)
                 )
@@ -281,6 +282,7 @@ public class EquipmentServiceImpl implements EquipmentService {
                 .description(equipment.getDescription())
                 .specifications(equipment.getSpecifications())
                 .imageUrl(equipment.getImageUrl())
+
                 .purchaseDate(equipment.getPurchaseDate())
                 .price(equipment.getPrice())
                 .quantity(equipment.getQuantity())

@@ -16,4 +16,6 @@ public class LabResponse {
     private String status;
     private String institution;
     private String department;
+    private String labManagerName;
+    private String labManagerEmail;
 }

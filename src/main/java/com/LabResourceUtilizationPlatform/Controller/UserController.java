@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,10 +46,28 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(request));
     }
 
+    @GetMapping("/department/{departmentName}")
+    public ResponseEntity<List<UserResponse>> getUsersByDepartment(
+            @PathVariable String departmentName) {
+
+        return ResponseEntity.ok(
+                userService.getUsersByDepartment(departmentName)
+        );
+    }
+
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteUser(@PathVariable String email) {
 
         userService.deleteUser(email);
         return ResponseEntity.ok("User Deleted Successfully");
+    }
+
+    @GetMapping("/lab-technicians")
+    @PreAuthorize("hasRole('LAB_MANAGER')")
+    public ResponseEntity<List<UserResponse>> getLabTechnicians() {
+
+        return ResponseEntity.ok(
+                userService.getLabTechniciansForManager()
+        );
     }
 }

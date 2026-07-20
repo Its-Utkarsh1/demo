@@ -410,8 +410,12 @@ public class DashBoardServiceImpl implements DashBoardService {
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        System.out.println("User ID: " + user.getId());
+
         Lab lab = labRepository.findByLabManagerId(user.getId())
                 .orElseThrow(() -> new RuntimeException("No lab assigned to this manager"));
+
+        System.out.println("Lab: " + lab.getLabName());
 
         Long labId = lab.getId();
 

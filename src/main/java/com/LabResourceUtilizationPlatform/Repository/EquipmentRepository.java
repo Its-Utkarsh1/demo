@@ -3,6 +3,7 @@ package com.LabResourceUtilizationPlatform.Repository;
 import com.LabResourceUtilizationPlatform.Entity.Department;
 import com.LabResourceUtilizationPlatform.Entity.Enum.EquipmentStatus;
 import com.LabResourceUtilizationPlatform.Entity.Equipment;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.LabResourceUtilizationPlatform.Entity.Lab;
 import org.springframework.stereotype.Repository;
@@ -52,5 +53,13 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
             EquipmentStatus status
     );
 
+    Optional<Equipment> findByEquipmentCodeAndLab_LabManager_Id(
+            String equipmentCode,
+            Long labManagerId
+    );
+
+
     List<Equipment> findByLab_Department_NameAndLab_Department_Institution_Code(String departmentName, String institutionCode);
+
+    Optional<Equipment> findByEquipmentCode(@NotBlank String equipmentCode);
 }

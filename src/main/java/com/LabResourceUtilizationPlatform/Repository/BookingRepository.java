@@ -2,6 +2,7 @@ package com.LabResourceUtilizationPlatform.Repository;
 
 import com.LabResourceUtilizationPlatform.Entity.Booking;
 import com.LabResourceUtilizationPlatform.Entity.Enum.BookingStatus;
+import com.LabResourceUtilizationPlatform.Entity.Lab;
 import com.LabResourceUtilizationPlatform.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -184,6 +186,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("labId") Long labId,
             @Param("status") BookingStatus status,
             @Param("date") LocalDate date
+    );
+    List<Booking> findByEquipment_Lab_LabManager_IdAndStatus(
+            Long labManagerId,
+            BookingStatus status
     );
 
 }

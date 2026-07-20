@@ -64,6 +64,14 @@ public class BookingController {
                         pageable));
     }
 
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('LAB_MANAGER')")
+    public ResponseEntity<List<BookingResponse>> getPendingBookings() {
+        return ResponseEntity.ok(
+                bookingService.getPendingBookingsForLabManager()
+        );
+    }
+
     // Get My Bookings
     @GetMapping("/my-bookings")
     public ResponseEntity<List<BookingResponse>> getMyBookings() {

@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "maintenance")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Maintenance {
@@ -42,12 +42,8 @@ public class Maintenance {
     @Column(nullable = false)
     private LocalDate scheduledDate;
 
-    private LocalDate completedDate;
-
-    @Column(length = 1000)
-    private String remarks;
-
-    private BigDecimal cost;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
