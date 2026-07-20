@@ -13,5 +13,8 @@ public interface UserService {
     UserResponse updateUser(UpdateUserRequest request);
     void deleteUser(String email);
     List<UserResponse> getLabTechniciansForManager();
-    List<UserResponse> getUsersByDepartment(String departmentCode);
+    List<UserResponse> getUsersByDepartment(
+            String institutionCode,
+            String departmentName
+    );
 }

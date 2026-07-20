@@ -152,10 +152,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getUsersByDepartment(String departmentCode) {
+    public List<UserResponse> getUsersByDepartment(
+            String institutionCode,
+            String departmentName) {
 
         return userRepository
-                .findByDepartment_Name(departmentCode)
+                .findByInstitution_CodeAndDepartment_Name(
+                        institutionCode,
+                        departmentName
+                )
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

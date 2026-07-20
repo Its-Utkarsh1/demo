@@ -3,6 +3,7 @@ package com.LabResourceUtilizationPlatform.Controller;
 import com.LabResourceUtilizationPlatform.Dtos.Request.CreateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Request.UpdateUserRequest;
 import com.LabResourceUtilizationPlatform.Dtos.Response.UserResponse;
+import com.LabResourceUtilizationPlatform.Entity.User;
 import com.LabResourceUtilizationPlatform.Service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,12 +47,16 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(request));
     }
 
-    @GetMapping("/department/{departmentName}")
+    @GetMapping("/{institutionCode}/{departmentName}")
     public ResponseEntity<List<UserResponse>> getUsersByDepartment(
+            @PathVariable String institutionCode,
             @PathVariable String departmentName) {
 
         return ResponseEntity.ok(
-                userService.getUsersByDepartment(departmentName)
+                userService.getUsersByDepartment(
+                        institutionCode,
+                        departmentName
+                )
         );
     }
 
